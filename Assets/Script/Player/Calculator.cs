@@ -25,6 +25,8 @@ public class Calculator : MonoBehaviour
     private Sprite[] operatorSprites;
     [SerializeField]
     private Sprite[] numberSprites;
+    [SerializeField]
+    private Sprite[] resultSprites;
 
     [SerializeField]
     private List<GameObject> verticalNumber = new List<GameObject>();
@@ -43,13 +45,16 @@ public class Calculator : MonoBehaviour
         }
     }
 
-    public void GetNearbyNumbers(GameObject objToCheck , Vector3Int positionToCheck)
+    public void GetNearbyNumbers(GameObject objToCheck, Vector3Int positionToCheck)
     {
         verticalNumber.Clear();
         horizontalNumber.Clear();
 
-        horizontalNumber.Add(objToCheck);
-        verticalNumber.Add(objToCheck);
+        if (objToCheck)
+        {
+            horizontalNumber.Add(objToCheck);
+            verticalNumber.Add(objToCheck);
+        }
 
         Vector3Int nextLeft = positionToCheck + Vector3Int.left;
         Vector3Int nextRight = positionToCheck + Vector3Int.right;
@@ -59,95 +64,202 @@ public class Calculator : MonoBehaviour
 
         while (GridCellManager.instance.IsPlacedCell(nextRight))
         {
-            horizontalNumber.Add(GridCellManager.instance.GetPlacedObj(nextRight));
-            nextRight += Vector3Int.right;
+            GameObject next = GridCellManager.instance.GetPlacedObj(nextRight);
+            if (next.CompareTag("Pushable"))
+            {
+                horizontalNumber.Add(next);
+                nextRight += Vector3Int.right;
+            }
+            else
+            {
+                break;
+            }
+
         }
 
         while (GridCellManager.instance.IsPlacedCell(nextLeft))
         {
-            horizontalNumber.Insert(0,GridCellManager.instance.GetPlacedObj(nextLeft));
-            nextLeft += Vector3Int.left;
+            GameObject next = GridCellManager.instance.GetPlacedObj(nextLeft);
+            if (next.CompareTag("Pushable"))
+            {
+                horizontalNumber.Insert(0, next);
+                nextLeft += Vector3Int.left;
+            }
+            else
+            {
+                break;
+            }
+
         }
 
         while (GridCellManager.instance.IsPlacedCell(nextUp))
         {
-            verticalNumber.Add(GridCellManager.instance.GetPlacedObj(nextUp));
-            nextUp += Vector3Int.up;
+            GameObject next = GridCellManager.instance.GetPlacedObj(nextUp);
+            if (next.CompareTag("Pushable"))
+            {
+                verticalNumber.Add(next);
+                nextUp += Vector3Int.up;
+            }
+            else
+            {
+                break;
+            }
+
         }
 
         while (GridCellManager.instance.IsPlacedCell(nextDown))
         {
-            verticalNumber.Insert(0,GridCellManager.instance.GetPlacedObj(nextDown));
-            nextDown += Vector3Int.down;
-        }
+            GameObject next = GridCellManager.instance.GetPlacedObj(nextDown);
+            if (next.CompareTag("Pushable"))
+            {
+                verticalNumber.Insert(0, next);
+                nextDown += Vector3Int.down;
+            }
+            else
+            {
+                break;
+            }
 
+        }
 
         //Test
         if (horizontalNumber.Count > 1)
         {
             string number = "";
-            int totalNumber = 0;
-            List<int> numbs = new List<int>();
-            numbs.Add(0);
-            List<OperatorType> operators = new List<OperatorType>();
-            
+
             for (int i = 0; i < horizontalNumber.Count; i++)
             {
                 if (horizontalNumber[i].GetComponent<Operation>().GetBlockType() == BlockType.Operator)
                 {
-                    operators.Add(horizontalNumber[i].GetComponent<Operation>().GetOperatorType());
-                    totalNumber++;
-                    number = "";
-                    numbs.Add(0);
+                    number += GetOperatorSign(horizontalNumber[i].GetComponent<Operation>().GetOperatorType());
                 }
                 else
                 {
                     number += horizontalNumber[i].GetComponent<Operation>().GetNumberValue().ToString();
-                    numbs[totalNumber] = int.Parse(number);
                 }
             }
 
-            Calculate(numbs, operators);
+            Calculate(number);
+        }
+        else if (verticalNumber.Count > 1)
+        {
+            string number = "";
+
+            for (int i = 0; i < verticalNumber.Count; i++)
+            {
+                if (verticalNumber[i].GetComponent<Operation>().GetBlockType() == BlockType.Operator)
+                {
+                    number += GetOperatorSign(verticalNumber[i].GetComponent<Operation>().GetOperatorType());
+                }
+                else
+                {
+                    number += verticalNumber[i].GetComponent<Operation>().GetNumberValue().ToString();
+                }
+            }
+
+            Calculate(number);
         }
     }
 
-    private void Calculate(List<int> numbs, List<OperatorType> operators)
+    private string GetOperatorSign(OperatorType op)
     {
-        double result = numbs[0];
-
-        for(int i = 0; i < operators.Count; i++)
+        if (op == OperatorType.Plus)
         {
-            if (operators[i] == OperatorType.Plus)
+            return "+";
+        }
+        else if (op == OperatorType.Minus)
+        {
+            return "-";
+        }
+        else if (op == OperatorType.Multiply)
+        {
+            return "*";
+        }
+        else if (op == OperatorType.Divide)
+        {
+            return "/";
+        }
+        else
+        {
+            return "";
+        }
+    }
+
+    private void Calculate(string numberString)
+    {
+        string[] numbers = numberString.Split('+', '-', '*', '/');
+
+        int start = 1;
+        int result = 0;
+
+        if (numberString[0] == '-' || numberString[0] == '+' || numberString[0] == '*' || numberString[0] == '/')
+        {
+            if(numbers.Length == 2)
             {
-                if(numbs.Count > i + 1)
-                {
-                    result += numbs[i + 1];
-                }
+                return;
             }
-            else if (operators[i] == OperatorType.Minus)
+            string temp = numberString[0] + numbers[1];
+            result = int.Parse(temp);
+            start = 2;
+        }
+        else
+        {
+            if(numbers.Length == 1)
             {
-                if (numbs.Count > i + 1)
-                {
-                    result -= numbs[i + 1];
-                }
+                return;
             }
-            else if (operators[i] == OperatorType.Multiply)
+            result = int.Parse(numbers[0]);
+        }
+
+        int index = start;
+
+        for(int i = start; i < numberString.Length; i++)
+        {
+            if (numberString[i] == '+')
             {
-                if (numbs.Count > i + 1)
+                if (numbers[index] == "")
                 {
-                    result *= numbs[i + 1];
+                    return;
                 }
+                result += int.Parse(numbers[index]);
+                index++;
             }
-            else if (operators[i] == OperatorType.Divide)
+            else if (numberString[i] == '-')
             {
-                if (numbs.Count > i + 1)
+                if (numbers[index] == "")
                 {
-                    result /= numbs[i + 1];
+                    return;
                 }
+                result -= int.Parse(numbers[index]);
+                index++;
+            }
+            else if (numberString[i] == '*')
+            {
+                if (numbers[index] == "")
+                {
+                    return;
+                }
+                result *= int.Parse(numbers[index]);
+                index++;
+            }
+            else if (numberString[i] == '/')
+            {
+                if (int.Parse(numbers[index]) == 0)
+                {
+                    Debug.Log("Divide by zero");
+                    return;
+                }
+                if (numbers[index] == "")
+                {
+                    return;
+                }
+                result /= int.Parse(numbers[index]);
+                index++;
             }
         }
 
-        Debug.Log(result);
+        GameManager.instance.ChangeResult(result);
+        GameManager.instance.CheckResult(result);
     }
 
     #region Get
@@ -160,6 +272,11 @@ public class Calculator : MonoBehaviour
     public Sprite GetNumberSprite(int number)
     {
         return numberSprites[number - 1];
+    }
+
+    public Sprite GetResultSprite(int number)
+    {
+        return resultSprites[number - 1];
     }
 
     #endregion

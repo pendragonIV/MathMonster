@@ -1,3 +1,4 @@
+using DG.Tweening;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -19,6 +20,8 @@ public class GameManager : MonoBehaviour
 
     public SceneChanger sceneChanger;
     public GameScene gameScene;
+
+    public Transform ResultContainer;
 
     #region Game status
     private Level currentLevelData;
@@ -60,6 +63,11 @@ public class GameManager : MonoBehaviour
         //LevelManager.instance.levelData.SaveDataJSON();
     }
 
+    public void ChangeResult(double result)
+    {
+        gameScene.SetResult(result);
+    }
+
     private void SetAchivement()
     {
         
@@ -97,6 +105,19 @@ public class GameManager : MonoBehaviour
     public bool IsGamePause()
     {
         return isGamePause;
+    }
+
+    public void CheckResult(int result)
+    {
+        foreach (Transform child in ResultContainer)
+        {
+            if (child.GetComponent<ResultBlock>().GetNumber() == result)
+            {
+                GridCellManager.instance.RemovePlacedCell(GridCellManager.instance.GetObjCell(child.gameObject.transform.position));
+                child.DOScale(0, .5f).OnComplete(() => Destroy(child.gameObject));
+                return;
+            }
+        }
     }
 }
 

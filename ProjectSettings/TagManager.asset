@@ -5,6 +5,8 @@ TagManager:
   serializedVersion: 2
   tags:
   - Pushable
+  - Result
+  - Goal
   layers:
   - Default
   - TransparentFX

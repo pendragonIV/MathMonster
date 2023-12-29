@@ -28,6 +28,15 @@ public class Player : MonoBehaviour
             Vector3Int nextCellPos = cellPos + new Vector3Int((int)movementDirection.x, (int)movementDirection.y, 0);
             if (GridCellManager.instance.IsPlaceableArea(nextCellPos))
             {
+                if(GridCellManager.instance.IsPlacedCell(nextCellPos))
+                {
+                    GameObject check = GridCellManager.instance.GetPlacedObj(nextCellPos);
+                    if (check.CompareTag("Result"))
+                    {
+                        movementDirection = Vector2.zero;
+                        return;
+                    }
+                }
                 GetNextNumbers(nextCellPos, movementDirection);
                 if (pushing.Count > 0)
                 {
@@ -45,6 +54,14 @@ public class Player : MonoBehaviour
                 isMoving = true;
             }
             movementDirection = Vector2.zero;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Goal"))
+        {
+            GameManager.instance.Win();
         }
     }
 
@@ -67,6 +84,7 @@ public class Player : MonoBehaviour
         {
             Vector3Int nextCellPos = MoveObj(numbers[i], dir);
         }
+        Calculator.instance.GetNearbyNumbers(null, pos);
         Calculator.instance.GetNearbyNumbers(numbers[0], next);
     }
 
@@ -99,7 +117,7 @@ public class Player : MonoBehaviour
         while(GridCellManager.instance.IsPlaceableArea(nextCellPos))
         {
             Collider2D next = Physics2D.OverlapPoint(GridCellManager.instance.PositonToMove(nextCellPos));
-            if (next)
+            if (next && next.CompareTag("Pushable"))
             {
                 pushing.Add(next.gameObject); 
             }
