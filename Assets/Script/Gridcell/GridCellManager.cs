@@ -37,7 +37,7 @@ public class GridCellManager : MonoBehaviour
 
     private void Start()
     {
-        GetMoveAbleCell();
+        //GetMoveAbleCell();
     }
 
     public void SetMap(Tilemap tilemap)
@@ -86,11 +86,6 @@ public class GridCellManager : MonoBehaviour
                 }
             }
         }
-    }
-
-    public void SetTileMap(Tilemap tilemap)
-    {
-        this.tileMap = tilemap;
     }
     public bool IsPlaceableArea(Vector3Int mouseCellPos)
     {

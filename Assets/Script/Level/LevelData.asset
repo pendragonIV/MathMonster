@@ -13,63 +13,43 @@ MonoBehaviour:
   m_Name: LevelData
   m_EditorClassIdentifier: 
   levels:
-  - map: {fileID: 0}
-    playerSpawnPosition: {x: 0, y: 0}
-    timeLimit: 0
-    achivement: 0
+  - map: {fileID: 8614777379606047103, guid: c55b366f70db51f4491b4b29d9ddb25e, type: 3}
+    timeLimit: 30
     isCompleted: 0
     isPlayable: 1
   - map: {fileID: 0}
-    playerSpawnPosition: {x: 0, y: 0}
     timeLimit: 0
-    achivement: 0
     isCompleted: 0
     isPlayable: 1
   - map: {fileID: 0}
-    playerSpawnPosition: {x: 0, y: 0}
     timeLimit: 0
-    achivement: 0
     isCompleted: 0
     isPlayable: 0
   - map: {fileID: 0}
-    playerSpawnPosition: {x: 0, y: 0}
     timeLimit: 0
-    achivement: 0
     isCompleted: 0
     isPlayable: 0
   - map: {fileID: 0}
-    playerSpawnPosition: {x: 0, y: 0}
     timeLimit: 0
-    achivement: 0
     isCompleted: 0
     isPlayable: 0
   - map: {fileID: 0}
-    playerSpawnPosition: {x: 0, y: 0}
     timeLimit: 0
-    achivement: 0
     isCompleted: 0
     isPlayable: 0
   - map: {fileID: 0}
-    playerSpawnPosition: {x: 0, y: 0}
     timeLimit: 0
-    achivement: 0
     isCompleted: 0
     isPlayable: 0
   - map: {fileID: 0}
-    playerSpawnPosition: {x: 0, y: 0}
     timeLimit: 0
-    achivement: 0
     isCompleted: 0
     isPlayable: 0
   - map: {fileID: 0}
-    playerSpawnPosition: {x: 0, y: 0}
     timeLimit: 0
-    achivement: 0
     isCompleted: 0
     isPlayable: 0
   - map: {fileID: 0}
-    playerSpawnPosition: {x: 0, y: 0}
     timeLimit: 0
-    achivement: 0
     isCompleted: 0
     isPlayable: 0

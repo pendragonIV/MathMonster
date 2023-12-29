@@ -68,6 +68,10 @@ public class Player : MonoBehaviour
     #region Input System
     public void OnMove(InputValue value)
     {
+        if(GameManager.instance.IsGameLose() || GameManager.instance.IsGameWin())
+        {
+            return;
+        }
         movementDirection = value.Get<Vector2>();
     }
     #endregion
